@@ -15,7 +15,7 @@ y = y.to_numpy()
 
 ### Tuning parameters
 theta_initial = np.ones([2,1])
-alpha = 0.11    # Learning rate / %
+alpha = 0.01   # Learning rate / %
 N = 100         # Number of gradient iterations
 
 ### Cost Function algorithm
@@ -40,10 +40,6 @@ for j in range(100):
     theta_initial = theta_initial.transpose()
     # Saving the cost function
     J_hist[j] = J
-    
-fig, ax = plt.subplots()
-ax.plot(J_hist)
-plt.show()
 
 # Plot of regressed line
 x_r = np.linspace(-1,7,100)
