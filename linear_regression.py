@@ -1,9 +1,11 @@
 # This file will attempt to perform linear regression on a set of data
 
+#%% Import modules
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#%% Define Functions
 def config_data(csv_file, labels):
     # Reading the data
     df = pd.read_csv(csv_file)
@@ -56,10 +58,11 @@ def plot_result(x, y, theta, labels):
     ax.plot(x_r, y_r)
     plt.show()
 
+#%% Main program
 labels = ['Re', 'Cd']
 X = config_data("data_file/data.csv", labels)
 
-### Tuning parameters
+# Tuning parameters
 theta_initial = np.ones([2,1])
 alpha = 0.11   # Learning rate / %
 N = 100         # Number of gradient iterations
