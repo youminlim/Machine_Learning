@@ -53,21 +53,23 @@ def plot_result(x, y, theta, labels):
     y_r = pd.DataFrame(np.ones([len(x_r),1]))
     y_r = y_r.assign(X = x_r)
     y_r= np.dot(y_r.to_numpy(),theta)
+    
     fig, ax = plt.subplots()
     ax.plot(x, y)
     ax.plot(x_r, y_r)
+    ax.set_xlabel(labels[0])
+    ax.set_ylabel(labels[1])
     plt.show()
-
 #%% Main program
 labels = ['Re', 'Cd']
-X = config_data("data_file/data.csv", labels)
+[x, y] = config_data("data_file/data.csv", labels)
 
-# Tuning parameters
+#%%% Tuning parametersd
 theta_initial = np.ones([2,1])
 alpha = 0.11   # Learning rate / %
 N = 100         # Number of gradient iterations
 
 [theta, J_hist] = GD(x, y, theta_initial, alpha, N)
 
-# Plot of regressed line
+#%%% Plot of regressed line
 plot_result(x, y, theta, labels)
