@@ -1,6 +1,7 @@
 # This module will be store all functions required to obtain a linear regression for a set of 2 dimensional data
 
 #%% Importing modules required for functions
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,8 +29,13 @@ def GD(X, y, theta, alpha, N):
     m = len(y)
     # Rewrites X to contain initial values for theta0
     initial_vals = pd.DataFrame(np.ones([m,1]))
-    X = initial_vals.assign(x = X)
-    X = X.to_numpy()
+    
+    for k in range(X.shape[1]):
+        name = ['theta ' + str(k+1)]
+        initial_vals = initial_vals.assign(name = X[k])
+        
+    X = initial_vals.to_numpy()
+    print(X)
     
     # Initialise histories of cost function and diff
     J_hist = np.zeros([N,1])
