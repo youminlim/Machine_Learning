@@ -104,15 +104,12 @@ def calcError(centroids, points, cluster_assignments):
     Outputs: total_error
     '''
     ###
-    K = centroids.shape[0]
     M = points.shape[0]
-    
-    error = cluster_assignments
+    total_error = 0
     
     for i in range(M):
-        error[i] = np.linalg.norm(points[i] - centroids[cluster_assignments[i]])
-    total_error = sum(error)
-    ###
+        total_error += np.linalg.norm(abs(points[i] - centroids[cluster_assignments[i]])**2)    
+
     return total_error   
 
 #centroids = np.array([[1,2],[0.5,0.5]])
@@ -140,12 +137,12 @@ def myKmeans(centroids, points, cluster_assignments, max_iter = 30):
         cluster_assignments = assignPointsToCentroids(centroids, points)
         
         # Recalculate centroids
-        newCentroids = recalcCentroids(centroids, points, cluster_assignments)
+        centroids = recalcCentroids(centroids, points, cluster_assignments)
         
         # Calculate error
         previous_error = mean_error
         mean_error = calcError(centroids, points, cluster_assignments)
-        print_statement = "Iteration: " + str(iteration) 
+        print_statement = "Error = " + str(mean_error) 
         print(print_statement)
         
         if previous_error == mean_error:
