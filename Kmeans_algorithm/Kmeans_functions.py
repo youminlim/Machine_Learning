@@ -1,6 +1,9 @@
 #%% This will be a module to store the functions to be used in the K-means algorithm
-
 # ============================================================================= 
+# Importing Modules :
+import numpy as np
+import pandas as pd
+# =============================================================================
 #     Definitions:
 #         
 #     centroids: numpy array of shape (K, N), where K is the 
@@ -32,17 +35,16 @@ def points2centroids(centroids, points):
 
     Outputs: cluster_assignments
     '''
-    K = centroids.shape[0]
-    M = points.shape[0]
-    
-    cluster_assignments = np.zeros(M, dtype = int)
-    distance = [[]] * K
+    cluster_assignments = []
             
-    for i in range(M):
-        for j in range(K):
-            distance[j] = np.linalg.norm(points[i] - centroids[j])
-        cluster_assignments[i] = int(distance.index(min(distance)))
+    for p in points:
+        distance = []
+        for c in centroids:
+            distance.append(np.linalg.norm(p - c))
+        cluster_assignments.append(np.argmin(distance))
         
+    cluster_assignments = np.array(cluster_assignments)
+    
     return cluster_assignments
 
     #%%% recalcCentroids
@@ -55,24 +57,12 @@ def recalcCentroids(centroids, points, cluster_assignments):
 
     Outputs: newCentroids
     '''
-    K = centroids.shape[0]
-    M = points.shape[0]
+    newCentroids = []
     
-    cluster_points = np.array([])
-    newCentroids = np.array([])
-    counter = 0
-    
-    # Separating each cluster's set of points
-    for i in range(K):
-        for j in range(M):
-            if cluster_assignments[j] == i:
-                cluster_points = np.append(cluster_points, points[i])
-                counter += 1
-        cluster_points = np.reshape(cluster_points, (counter, 2))
-        # Calculating the mean between all points in a cluster
-        newCentroids = np.append(newCentroids, np.mean(cluster_points, axis = 0))
-    
-    newCentroids = np.reshape(newCentroids, (K,2))
+    points_columns = ['x1','x2']
+    joined_data = np.column_stack((cluster_assignments, points))
+    df = pd.DataFrame(joined_data, columns = ["centroids", "x1", "x2"])
+    newCentroids = df.groupby('centroids').agg('mean').loc[:,points_columns].reset_index(drop = True).to_numpy()
 
     return newCentroids
 
@@ -86,12 +76,11 @@ def calcError(centroids, points, cluster_assignments):
 
     Outputs: total_error
     '''
-    ###
     M = points.shape[0]
     total_error = 0
     
     for i in range(M):
-        total_error += np.linalg.norm(abs(points[i] - centroids[cluster_assignments[i]])**2)    
+        total_error += np.linalg.norm(points[i] - centroids[cluster_assignments[i]])**2    
 
     return total_error
     
@@ -124,7 +113,7 @@ def Kmeans(centroids, points, cluster_assignments, max_iter = 30):
         print_statement = "Error = " + str(mean_error) 
         print(print_statement)
         
-        if previous_error == mean_error:
+        if mean_error == previous_error:
             break
         
         iteration += 1
